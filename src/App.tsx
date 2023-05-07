@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import NewBook from "./books/pages/NewBook";
+import UserBooks from "./books/pages/UserBooks";
 
 import MainNavigation from "./shared/components/Navigation/MainNavigation";
 import Users from "./users/pages/Users";
@@ -15,6 +16,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Users />} />
             <Route path="/livros/novo" element={<NewBook />} />
+            <Route path="/:userId/livros" element={<UserBooks />} />
           </Routes>
         </main>
       </BrowserRouter>
