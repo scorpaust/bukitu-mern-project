@@ -5,6 +5,7 @@ import BookList from "../components/BookList";
 const dummy_books = [
   {
     id: "b1",
+    isbn: "9781501137259",
     title: "O Enigma das Sombras",
     summary:
       "Num mundo onde a escuridão possui poderes misteriosos, um jovem aprendiz embarca em uma busca perigosa para descobrir a verdade por trás das sombras enigmáticas. Conforme segredos são revelados, ele percebe que seu destino está entrelaçado com o destino de todo o reino.",
@@ -15,6 +16,7 @@ const dummy_books = [
   },
   {
     id: "b2",
+    isbn: "0738531367",
     title: "Ecos na Eternidade",
     summary:
       "Ambientado em um futuro distópico, um músico talentoso descobre uma melodia escondida que detém a chave para restaurar a harmonia em uma sociedade arruinada. Junto a um grupo de rebeldes, ela precisa confrontar o regime opressor e reacender a esperança em um mundo à beira do colapso.",
@@ -25,6 +27,7 @@ const dummy_books = [
   },
   {
     id: "b3",
+    isbn: "0738531367",
     title: "O Reino Esquecido",
     summary:
       "Em uma terra governada por magia antiga e lendas esquecidas, uma jovem guerreira se ergue para reconquistar seu trono legítimo. Com um grupo de companheiros leais, ela embarca em uma jornada perigosa, enfrentando criaturas míticas e forças sombrias que ameaçam mergulhar o reino em uma escuridão eterna.",

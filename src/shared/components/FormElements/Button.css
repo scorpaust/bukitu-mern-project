@@ -43,6 +43,17 @@
   border-color: #f34343;
 }
 
+.button--info {
+  background: #98a886;
+  border-color: #98a886;
+}
+
+.button--info:hover,
+.button--info:active {
+  background: #ddf45b;
+  border-color: #ddf45b;
+}
+
 .button:disabled,
 .button:hover:disabled,
 .button:active:disabled {

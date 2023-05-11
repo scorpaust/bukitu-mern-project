@@ -18,7 +18,7 @@
 }
 
 .book-item__image img {
-  width: 20rem;
+  width: 18rem;
   height: 100%;
 }
 
@@ -45,6 +45,11 @@
 .book-item__actions button,
 .book-item__actions a {
   margin: 0.5rem;
+}
+
+.book-container {
+  height: 600px;
+  width: 500px;
 }
 
 @media (min-width: 768px) {

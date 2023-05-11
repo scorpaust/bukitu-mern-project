@@ -8,6 +8,7 @@ type Props = {
   size?: number;
   inverse?: boolean;
   danger?: boolean;
+  info?: boolean;
   to?: string;
   type?: "button" | "submit" | "reset";
   onClick?: MouseEventHandler<HTMLElement>;
@@ -20,7 +21,8 @@ const Button = (props: Props) => {
     return (
       <a
         className={`button button--${props.size || "default"} ${props.inverse &&
-          "button--inverse"} ${props.danger && "button--danger"}`}
+          "button--inverse"} ${props.danger && "button--danger"} ${props.info &&
+          "button--info"}`}
         href={props.href}
       >
         {props.children}
@@ -32,7 +34,8 @@ const Button = (props: Props) => {
       <Link
         to={props.to}
         className={`button button--${props.size || "default"} ${props.inverse &&
-          "button--inverse"} ${props.danger && "button--danger"}`}
+          "button--inverse"} ${props.danger && "button--danger"} ${props.info &&
+          "button--info"}`}
       >
         {props.children}
       </Link>
@@ -41,7 +44,8 @@ const Button = (props: Props) => {
   return (
     <button
       className={`button button--${props.size || "default"} ${props.inverse &&
-        "button--inverse"} ${props.danger && "button--danger"}`}
+        "button--inverse"} ${props.danger && "button--danger"} ${props.info &&
+        "button--info"}`}
       type={props.type}
       onClick={props.onClick}
       disabled={props.disabled}

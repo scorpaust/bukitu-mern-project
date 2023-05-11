@@ -19,3 +19,9 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+#viewerCanvas {
+  margin-left: 150px;
+  width: 600px;
+  height: 500px;
+}
