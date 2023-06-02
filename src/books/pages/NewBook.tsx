@@ -4,7 +4,7 @@ import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
 } from "../../shared/util/validators";
-import "./NewBook.css";
+import "./BookForm.css";
 import Button from "../../shared/components/FormElements/Button";
 
 const formReducer = (state: any, action: any) => {

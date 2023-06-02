@@ -17,6 +17,8 @@ type Props = {
   rows?: number;
   errorText?: string;
   validators: Array<any>;
+  value?: any;
+  valid?: boolean;
   onInput: Function;
 };
 
@@ -40,9 +42,9 @@ const inputReducer = (state: any, action: any) => {
 
 const Input = (props: Props) => {
   const [inputState, dispatch] = useReducer(inputReducer, {
-    value: "",
+    value: props.value || "",
     isTouched: false,
-    isValid: false,
+    isValid: props.valid || false,
   });
 
   const { id, onInput } = props;
