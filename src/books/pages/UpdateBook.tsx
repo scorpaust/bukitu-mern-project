@@ -1,7 +1,8 @@
-import React from "react";
+import React, { FormEventHandler } from "react";
 import { useParams } from "react-router-dom";
 import Button from "../../shared/components/FormElements/Button";
 import Input from "../../shared/components/FormElements/Input";
+import { useForm } from "../../shared/hooks/form-hook";
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MINLENGTH,
@@ -49,45 +50,65 @@ const UpdateBook = () => {
 
   const identifiedBook = dummy_books.find((b) => b.id === bookId);
 
-  if (!identifiedBook) {
+  const [formState, inputHandler] = useForm(
+    {
+      title: {
+        value: identifiedBook !== undefined ? identifiedBook.title : "",
+        isValid: true,
+      },
+      description: {
+        value: identifiedBook !== undefined ? identifiedBook.summary : "",
+        isValid: true,
+      },
+    },
+    true
+  );
+
+  if (identifiedBook) {
+    const bookUpdateSubmitHandler = (event: React.SyntheticEvent) => {
+      event.preventDefault();
+
+      console.log(formState.inputs);
+    };
+
+    return (
+      <form className="book-form" onSubmit={bookUpdateSubmitHandler}>
+        <Input
+          id="title"
+          element="input"
+          placeholder="Título do livro..."
+          type="text"
+          label="Título"
+          validators={[VALIDATOR_REQUIRE()]}
+          errorText="Por favor, insira um título válido."
+          onInput={inputHandler}
+          value={formState.inputs.title.value}
+          valid={formState.inputs.title.isValid}
+        />
+        <Input
+          id="description"
+          element="textarea"
+          placeholder="Descrição do livro..."
+          type="text"
+          label="Descrição"
+          validators={[VALIDATOR_MINLENGTH(5)]}
+          errorText="Por favor, insira um título válido."
+          onInput={inputHandler}
+          value={formState.inputs.description.value}
+          valid={formState.inputs.description.isValid}
+        />
+        <Button type="submit" disabled={!formState.isValid}>
+          Atualizar Livro
+        </Button>
+      </form>
+    );
+  } else {
     return (
       <div className="center">
         <h2>Sem livros adicionados!</h2>
       </div>
     );
   }
-
-  return (
-    <form className="book-form">
-      <Input
-        id="title"
-        element="input"
-        placeholder="Título do livro..."
-        type="text"
-        label="Título"
-        validators={[VALIDATOR_REQUIRE()]}
-        errorText="Por favor, insira um título válido."
-        onInput={() => {}}
-        value={identifiedBook.title}
-        valid={true}
-      />
-      <Input
-        id="description"
-        element="textarea"
-        placeholder="Descrição do livro..."
-        type="text"
-        label="Descrição"
-        validators={[VALIDATOR_MINLENGTH(5)]}
-        errorText="Por favor, insira um título válido."
-        onInput={() => {}}
-        value={identifiedBook.summary}
-        valid={true}
-      />
-      <Button type="submit" disabled={true}>
-        Atualizar Livro
-      </Button>
-    </form>
-  );
 };
 
 export default UpdateBook;
