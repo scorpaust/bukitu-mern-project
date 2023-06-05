@@ -1,4 +1,4 @@
-import React, { FormEventHandler } from "react";
+import React, { FormEventHandler, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Button from "../../shared/components/FormElements/Button";
 import Input from "../../shared/components/FormElements/Input";
@@ -46,23 +46,41 @@ const dummy_books = [
 ];
 
 const UpdateBook = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const bookId = useParams().livroId;
+
+  const [formState, inputHandler, setFormData] = useForm(
+    {
+      title: {
+        value: "",
+        isValid: false,
+      },
+      description: {
+        value: "",
+        isValid: false,
+      },
+    },
+    false
+  );
 
   const identifiedBook = dummy_books.find((b) => b.id === bookId);
 
-  const [formState, inputHandler] = useForm(
-    {
-      title: {
-        value: identifiedBook !== undefined ? identifiedBook.title : "",
-        isValid: true,
+  useEffect(() => {
+    setFormData(
+      {
+        title: {
+          value: identifiedBook != undefined ? identifiedBook.title : "",
+          isValid: true,
+        },
+        description: {
+          value: identifiedBook != undefined ? identifiedBook.summary : "",
+          isValid: true,
+        },
       },
-      description: {
-        value: identifiedBook !== undefined ? identifiedBook.summary : "",
-        isValid: true,
-      },
-    },
-    true
-  );
+      true
+    );
+    setIsLoading(false);
+  }, [setFormData, identifiedBook]);
 
   if (identifiedBook) {
     const bookUpdateSubmitHandler = (event: React.SyntheticEvent) => {
@@ -70,6 +88,14 @@ const UpdateBook = () => {
 
       console.log(formState.inputs);
     };
+
+    if (isLoading) {
+      return (
+        <div className="center">
+          <h2>Carregando...</h2>
+        </div>
+      );
+    }
 
     return (
       <form className="book-form" onSubmit={bookUpdateSubmitHandler}>
@@ -105,7 +131,7 @@ const UpdateBook = () => {
   } else {
     return (
       <div className="center">
-        <h2>Sem livros adicionados!</h2>
+        <h2>Livro inexistente!</h2>
       </div>
     );
   }

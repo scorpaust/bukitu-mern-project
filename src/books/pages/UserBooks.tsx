@@ -1,8 +1,9 @@
 import React from "react";
 import { useParams } from "react-router-dom";
+import { Book } from "../../types/Book";
 import BookList from "../components/BookList";
 
-const dummy_books = [
+const dummy_books: Book[] = [
   {
     id: "b1",
     isbn: "9781501137259",

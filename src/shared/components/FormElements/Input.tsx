@@ -92,6 +92,7 @@ const Input = (props: Props) => {
       <textarea
         id={props.id}
         rows={props.rows || 3}
+        placeholder={props.placeholder}
         onChange={changeTextareaHandler}
         onBlur={touchInputHandler}
         value={inputState.value}

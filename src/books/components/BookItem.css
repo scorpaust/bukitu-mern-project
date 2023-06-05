@@ -18,8 +18,8 @@
 }
 
 .book-item__image img {
-  width: 18rem;
-  height: 100%;
+  width: 10rem;
+  height: auto;
 }
 
 .book-item__info h2,
@@ -48,12 +48,12 @@
 }
 
 .book-container {
-  height: 600px;
+  height: 500px;
   width: 500px;
 }
 
 @media (min-width: 768px) {
   .book-item__image {
-    height: 20rem;
+    height: auto;
   }
 }

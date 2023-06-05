@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "../../shared/components/FormElements/Button";
 import Card from "../../shared/components/UIElements/Card";
 import { Book } from "../../types/Book";
 import BookItem from "./BookItem";
@@ -14,7 +15,7 @@ const BookList = (props: Props) => {
       <div className="book-list center">
         <Card>
           <h2>Nenhum livro encontrado.</h2>
-          <button>Adiciona um à estante!</button>
+          <Button to="/livros/novo">Adiciona um à estante!</Button>
         </Card>
       </div>
     );
