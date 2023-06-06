@@ -6,6 +6,7 @@ import UpdateBook from "./books/pages/UpdateBook";
 import UserBooks from "./books/pages/UserBooks";
 
 import MainNavigation from "./shared/components/Navigation/MainNavigation";
+import Aut from "./users/pages/Aut";
 import Users from "./users/pages/Users";
 
 const App = () => {
@@ -19,6 +20,7 @@ const App = () => {
             <Route path="/livros/novo" element={<NewBook />} />
             <Route path="/livros/:livroId" element={<UpdateBook />} />
             <Route path="/:userId/livros" element={<UserBooks />} />
+            <Route path="/aut" element={<Aut />} />
           </Routes>
         </main>
       </BrowserRouter>
