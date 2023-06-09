@@ -1,15 +1,24 @@
-import React, { CSSProperties, useEffect, useRef, useState } from "react";
+import React, {
+  CSSProperties,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Button from "../../shared/components/FormElements/Button";
 import Card from "../../shared/components/UIElements/Card";
 import Modal from "../../shared/components/UIElements/Modal";
 import { Book } from "../../types/Book";
 import "./BookItem.css";
+import { AuthContext } from "../../shared/context/auth-context";
 
 type Props = {
   item: Book;
 };
 
 const BookItem = (props: Props) => {
+  const auth = useContext(AuthContext);
+
   const [showBook, setShowBook] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -57,7 +66,7 @@ const BookItem = (props: Props) => {
             <p>Quer remover este livro?</p>
           </Modal>
           <div className="book-item__actions">
-            <Button to={`/livros/remover`}>Comprar</Button>
+            {auth.isLoggedIn && <Button to={`/livros/remover`}>Comprar</Button>}
             <Button danger onClick={showDeleteWarningHandler}>
               Remover
             </Button>
