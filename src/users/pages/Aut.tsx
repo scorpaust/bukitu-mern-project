@@ -10,11 +10,17 @@ import {
 } from "../../shared/util/validators";
 import { useForm } from "../../shared/hooks/form-hook";
 import { AuthContext } from "../../shared/context/auth-context";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 
 const Aut = () => {
   const auth = useContext(AuthContext);
 
   const [isLoginMode, setIsLoginMode] = useState(true);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [error, setError] = useState("");
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -30,12 +36,77 @@ const Aut = () => {
     false
   );
 
-  const authSubmitHandler = (event: React.SyntheticEvent) => {
+  const authSubmitHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    console.log(formState.inputs);
+    if (isLoginMode) {
+      try {
+        setIsLoading(true);
+        const response = await fetch(
+          "http://localhost:5000/api/utilizadores/entrar",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: formState.inputs.email.value,
+              password: formState.inputs.password.value,
+            }),
+          }
+        );
 
-    auth.login();
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(responseData.message);
+        }
+
+        setIsLoading(false);
+        auth.login();
+      } catch (err) {
+        if (err instanceof Error) {
+          setIsLoading(false);
+          setError(
+            err.message || "Algo correu errado. Tente, de novo, mais tarde."
+          );
+        }
+      }
+    } else {
+      try {
+        setIsLoading(true);
+        const response = await fetch(
+          "http://localhost:5000/api/utilizadores/registar",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: formState.inputs.name.value,
+              email: formState.inputs.email.value,
+              password: formState.inputs.password.value,
+            }),
+          }
+        );
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(responseData.message);
+        }
+
+        setIsLoading(false);
+        auth.login();
+      } catch (err) {
+        if (err instanceof Error) {
+          setIsLoading(false);
+          setError(
+            err.message || "Algo correu errado. Tente, de novo, mais tarde."
+          );
+        }
+      }
+    }
   };
 
   const switchModeHandler = () => {
@@ -56,52 +127,60 @@ const Aut = () => {
     setIsLoginMode((prevMode) => !prevMode);
   };
 
-  return (
-    <Card className="authentication">
-      <h2>Autenticação</h2>
+  const errorHandler = () => {
+    setError("");
+  };
 
-      <hr />
-      <form>
-        {!isLoginMode && (
+  return (
+    <>
+      <ErrorModal error={error} onClear={errorHandler} />
+      <Card className="authentication">
+        {isLoading && <LoadingSpinner asOverlay />}
+        <h2>Autenticação</h2>
+
+        <hr />
+        <form onSubmit={authSubmitHandler}>
+          {!isLoginMode && (
+            <Input
+              element="input"
+              id="name"
+              type="name"
+              label="Nome"
+              errorText="Por favor, insira um nome válido."
+              placeholder="O seu nome..."
+              onInput={inputHandler}
+              validators={[VALIDATOR_REQUIRE()]}
+            />
+          )}
           <Input
             element="input"
-            id="name"
-            type="name"
-            label="Nome"
-            errorText="Por favor, insira um nome válido."
-            placeholder="O seu nome..."
+            id="email"
+            type="email"
+            label="Endereço eletrónico"
+            errorText="Por favor, insira um endereço eletrónico válido."
+            placeholder="Endereço eletrónico..."
             onInput={inputHandler}
-            validators={[VALIDATOR_REQUIRE()]}
+            validators={[VALIDATOR_EMAIL()]}
           />
-        )}
-        <Input
-          element="input"
-          id="email"
-          type="email"
-          label="Endereço eletrónico"
-          errorText="Por favor, insira um endereço eletrónico válido."
-          placeholder="Endereço eletrónico..."
-          onInput={inputHandler}
-          validators={[VALIDATOR_EMAIL()]}
-        />
-        <Input
-          element="input"
-          id="password"
-          type="password"
-          label="Senha"
-          errorText="Por favor, insira uma senha válida com, pelo menos, 5 caracteres."
-          placeholder="Senha..."
-          onInput={inputHandler}
-          validators={[VALIDATOR_MINLENGTH(5)]}
-        />
-        <Button type="submit" disabled={!formState.isValid}>
-          {isLoginMode ? "Entrar" : "Registar"}
+          <Input
+            element="input"
+            id="password"
+            type="password"
+            label="Senha"
+            errorText="Por favor, insira uma senha válida com, pelo menos, 5 caracteres."
+            placeholder="Senha..."
+            onInput={inputHandler}
+            validators={[VALIDATOR_MINLENGTH(5)]}
+          />
+          <Button type="submit" disabled={!formState.isValid}>
+            {isLoginMode ? "Entrar" : "Registar"}
+          </Button>
+        </form>
+        <Button inverse onClick={switchModeHandler}>
+          Mudar para {isLoginMode ? "Registar" : "Entrar"}
         </Button>
-      </form>
-      <Button inverse onClick={switchModeHandler}>
-        Mudar para {isLoginMode ? "Registar" : "Entrar"}
-      </Button>
-    </Card>
+      </Card>
+    </>
   );
 };
 
