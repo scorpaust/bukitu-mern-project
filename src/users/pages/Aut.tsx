@@ -12,15 +12,12 @@ import { useForm } from "../../shared/hooks/form-hook";
 import { AuthContext } from "../../shared/context/auth-context";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 
 const Aut = () => {
   const auth = useContext(AuthContext);
 
   const [isLoginMode, setIsLoginMode] = useState(true);
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [error, setError] = useState("");
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -36,76 +33,42 @@ const Aut = () => {
     false
   );
 
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
   const authSubmitHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
     if (isLoginMode) {
       try {
-        setIsLoading(true);
-        const response = await fetch(
+        const responseData = await sendRequest(
           "http://localhost:5000/api/utilizadores/entrar",
+          "POST",
+          JSON.stringify({
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }),
           {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: formState.inputs.email.value,
-              password: formState.inputs.password.value,
-            }),
+            "Content-Type": "application/json",
           }
         );
-
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          throw new Error(responseData.message);
-        }
-
-        setIsLoading(false);
-        auth.login();
-      } catch (err) {
-        if (err instanceof Error) {
-          setIsLoading(false);
-          setError(
-            err.message || "Algo correu errado. Tente, de novo, mais tarde."
-          );
-        }
-      }
+        auth.login(responseData.user.id);
+      } catch (err) {}
     } else {
       try {
-        setIsLoading(true);
-        const response = await fetch(
+        const responseData = await sendRequest(
           "http://localhost:5000/api/utilizadores/registar",
+          "POST",
+          JSON.stringify({
+            name: formState.inputs.name.value,
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }),
           {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: formState.inputs.name.value,
-              email: formState.inputs.email.value,
-              password: formState.inputs.password.value,
-            }),
+            "Content-Type": "application/json",
           }
         );
-
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          throw new Error(responseData.message);
-        }
-
-        setIsLoading(false);
-        auth.login();
-      } catch (err) {
-        if (err instanceof Error) {
-          setIsLoading(false);
-          setError(
-            err.message || "Algo correu errado. Tente, de novo, mais tarde."
-          );
-        }
-      }
+        auth.login(responseData.user.id);
+      } catch (err) {}
     }
   };
 
@@ -127,13 +90,9 @@ const Aut = () => {
     setIsLoginMode((prevMode) => !prevMode);
   };
 
-  const errorHandler = () => {
-    setError("");
-  };
-
   return (
     <>
-      <ErrorModal error={error} onClear={errorHandler} />
+      <ErrorModal error={error} onClear={clearError} />
       <Card className="authentication">
         {isLoading && <LoadingSpinner asOverlay />}
         <h2>Autenticação</h2>

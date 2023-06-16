@@ -1,7 +1,9 @@
 .user-item {
+  display: flex;
   margin: 1rem;
   width: calc(45% - 2rem);
-  min-width: 17.5rem;
+  min-width: 20rem;
+  height: 8rem; /* Fixed height */
 }
 
 .user-item a {
@@ -22,6 +24,10 @@
 
 .user-item__content {
   padding: 0;
+  flex: 1; /* Make content take the available space */
+  display: flex; /* Make content a flex container */
+  flex-direction: column; /* Stack content vertically */
+  justify-content: center; /* Center content vertically */
 }
 
 .user-item__image {
@@ -35,6 +41,7 @@
   margin: 0 0 0.5rem 0;
   font-weight: normal;
   color: #ffd900;
+  word-wrap: break-word; /* Break words to prevent overflow */
 }
 
 .user-item:hover h2,
@@ -46,4 +53,12 @@
 
 .user-item__info h3 {
   margin: 0;
+  word-wrap: break-word; /* Break words to prevent overflow */
+}
+
+@media screen and (max-width: 768px) {
+  user-item {
+    width: 90%; /* Full width minus margins */
+    flex: none;
+  }
 }
