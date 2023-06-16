@@ -32,23 +32,23 @@ const App = () => {
 
   if (isLoggedIn) {
     routes = (
-      <>
+      <React.Fragment>
         <Routes>
           <Route path="/" element={<Users />} />
           <Route path="/livros/novo" element={<NewBook />} />
           <Route path="/livros/:livroId" element={<UpdateBook />} />
           <Route path="/:userId/livros" element={<UserBooks />} />
         </Routes>
-      </>
+      </React.Fragment>
     );
   } else {
     routes = (
-      <>
+      <React.Fragment>
         <Routes>
           <Route path="/" element={<Users />} />
           <Route path="/aut" element={<Aut />} />
         </Routes>
-      </>
+      </React.Fragment>
     );
   }
 

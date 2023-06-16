@@ -45,7 +45,7 @@ const BookItem = (props: Props) => {
           <div className="book-item__info">
             <h2>{props.item.title}</h2>
             <h3>{props.item.summary}</h3>
-            <p>{props.item.author}</p>
+            <p>{props.item.authors}</p>
           </div>
           <Modal
             header="Tem a certeza?"
