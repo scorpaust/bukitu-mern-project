@@ -126,10 +126,10 @@ const Aut = () => {
             id="password"
             type="password"
             label="Senha"
-            errorText="Por favor, insira uma senha válida com, pelo menos, 5 caracteres."
+            errorText="Por favor, insira uma senha válida com, pelo menos, 6 caracteres."
             placeholder="Senha..."
             onInput={inputHandler}
-            validators={[VALIDATOR_MINLENGTH(5)]}
+            validators={[VALIDATOR_MINLENGTH(6)]}
           />
           <Button type="submit" disabled={!formState.isValid}>
             {isLoginMode ? "Entrar" : "Registar"}

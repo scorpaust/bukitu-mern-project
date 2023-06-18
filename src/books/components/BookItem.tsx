@@ -11,16 +11,28 @@ import Modal from "../../shared/components/UIElements/Modal";
 import { Book } from "../../types/Book";
 import "./BookItem.css";
 import { AuthContext } from "../../shared/context/auth-context";
+import { useHttpClient } from "../../shared/hooks/http-hook";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 
 type Props = {
   item: Book;
+  onDelete: Function;
 };
 
 const BookItem = (props: Props) => {
   const auth = useContext(AuthContext);
 
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
   const [showBook, setShowBook] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  const isOwner = () => {
+    if (props.item.userIds.includes(auth.userId)) return true;
+
+    return false;
+  };
 
   const showDeleteWarningHandler = () => {
     setShowConfirmModal(true);
@@ -30,15 +42,23 @@ const BookItem = (props: Props) => {
     setShowConfirmModal(false);
   };
 
-  const confirmDeleteHandler = () => {
+  const confirmDeleteHandler = async () => {
     setShowConfirmModal(false);
-    console.log("Apagando o livro...");
+    try {
+      await sendRequest(
+        `http://localhost:5000/api/livros/${props.item.id}`,
+        "DELETE"
+      );
+      props.onDelete(props.item.id);
+    } catch (err) {}
   };
 
   return (
-    <>
+    <React.Fragment>
+      <ErrorModal error={error} onClear={clearError} />
       <li className="book-item">
         <Card className="book-item__content">
+          {isLoading && <LoadingSpinner asOverlay />}
           <div className="book-item__image">
             <img src={props.item.image} alt={props.item.title} />
           </div>
@@ -66,14 +86,19 @@ const BookItem = (props: Props) => {
             <p>Quer remover este livro?</p>
           </Modal>
           <div className="book-item__actions">
-            {auth.isLoggedIn && <Button to={`/livros/remover`}>Comprar</Button>}
-            <Button danger onClick={showDeleteWarningHandler}>
-              Remover
-            </Button>
+            {isOwner() && (
+              <React.Fragment>
+                <Button to={`/livros/${props.item.id}`}>Editar</Button>
+                <Button danger onClick={showDeleteWarningHandler}>
+                  Remover
+                </Button>
+              </React.Fragment>
+            )}
+            <Button to={`/`}>Comprar</Button>
           </div>
         </Card>
       </li>
-    </>
+    </React.Fragment>
   );
 };
 

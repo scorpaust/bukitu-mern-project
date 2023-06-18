@@ -26,6 +26,12 @@ const UserBooks = () => {
     fetchBooks();
   }, [sendRequest, userId]);
 
+  const bookDeletedHandler = (deletedBookId: string) => {
+    setLoadedBooks((prevBooks) =>
+      prevBooks.filter((book: Book) => book.id !== deletedBookId)
+    );
+  };
+
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
@@ -34,7 +40,9 @@ const UserBooks = () => {
           <LoadingSpinner asOverlay />
         </div>
       )}
-      {!isLoading && loadedBooks.length > 0 && <BookList items={loadedBooks} />}
+      {!isLoading && loadedBooks.length > 0 && (
+        <BookList items={loadedBooks} onDeleteBook={bookDeletedHandler} />
+      )}
     </React.Fragment>
   );
 };

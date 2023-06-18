@@ -1,53 +1,33 @@
-import React, { FormEventHandler, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, {
+  FormEventHandler,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Button from "../../shared/components/FormElements/Button";
 import Input from "../../shared/components/FormElements/Input";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import { AuthContext } from "../../shared/context/auth-context";
 import { useForm } from "../../shared/hooks/form-hook";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MINLENGTH,
 } from "../../shared/util/validators";
 import "./BookForm.css";
 
-const dummy_books = [
-  {
-    id: "b1",
-    isbn: "9781501137259",
-    title: "O Enigma das Sombras",
-    summary:
-      "Num mundo onde a escuridão possui poderes misteriosos, um jovem aprendiz embarca em uma busca perigosa para descobrir a verdade por trás das sombras enigmáticas. Conforme segredos são revelados, ele percebe que seu destino está entrelaçado com o destino de todo o reino.",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Shadowman-3.jpg/220px-Shadowman-3.jpg",
-    author: "Amelia Harper",
-    userIds: ["u1"],
-  },
-  {
-    id: "b2",
-    isbn: "0738531367",
-    title: "Ecos na Eternidade",
-    summary:
-      "Ambientado em um futuro distópico, um músico talentoso descobre uma melodia escondida que detém a chave para restaurar a harmonia em uma sociedade arruinada. Junto a um grupo de rebeldes, ela precisa confrontar o regime opressor e reacender a esperança em um mundo à beira do colapso.",
-    image:
-      "https://static.livrariaespirita.org.br/media/catalog/product/cache/1/image/450x/17f82f742ffe127f42dca9de82fb58b1/e/c/ecos-na-eternidade.jpg",
-    author: "Sebastian Mitchell",
-    userIds: ["u1"],
-  },
-  {
-    id: "b3",
-    isbn: "0738531367",
-    title: "O Reino Esquecido",
-    summary:
-      "Em uma terra governada por magia antiga e lendas esquecidas, uma jovem guerreira se ergue para reconquistar seu trono legítimo. Com um grupo de companheiros leais, ela embarca em uma jornada perigosa, enfrentando criaturas míticas e forças sombrias que ameaçam mergulhar o reino em uma escuridão eterna.",
-    image:
-      "https://static.fnac-static.com/multimedia/Images/PT/MC/59/b9/90/9484633/1507-1/tsp20230117231550/O-Reino-Esquecido-Arqueologia-E-Historia-De-Israel.jpg",
-    author: "Gabriella Knight",
-    userIds: ["u1"],
-  },
-];
-
 const UpdateBook = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const bookId = useParams().livroId;
+  const bookId = useParams().lid;
+
+  const navigate = useNavigate();
+
+  const auth = useContext(AuthContext);
+
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
+  const [loadedBook, setLoadedBook]: any = useState(undefined);
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -59,74 +39,122 @@ const UpdateBook = () => {
         value: "",
         isValid: false,
       },
+      authors: {
+        value: "",
+        isValid: false,
+      },
     },
     false
   );
 
-  const identifiedBook = dummy_books.find((b) => b.id === bookId);
+  const fetchBook = async () => {
+    try {
+      const responseData = await sendRequest(
+        `http://localhost:5000/api/livros/${bookId}`
+      );
+      setLoadedBook(responseData.book);
+
+      setFormData(
+        {
+          title: {
+            value: loadedBook != undefined ? loadedBook.title : "",
+            isValid: true,
+          },
+          description: {
+            value: loadedBook != undefined ? loadedBook.summary : "",
+            isValid: true,
+          },
+          authors: {
+            value: loadedBook != undefined ? loadedBook.authors : "",
+            isValid: true,
+          },
+        },
+        true
+      );
+    } catch (err) {}
+  };
 
   useEffect(() => {
-    setFormData(
-      {
-        title: {
-          value: identifiedBook != undefined ? identifiedBook.title : "",
-          isValid: true,
-        },
-        description: {
-          value: identifiedBook != undefined ? identifiedBook.summary : "",
-          isValid: true,
-        },
-      },
-      true
-    );
-    setIsLoading(false);
-  }, [setFormData, identifiedBook]);
+    fetchBook();
+  }, [sendRequest, bookId]);
 
-  if (identifiedBook) {
-    const bookUpdateSubmitHandler = (event: React.SyntheticEvent) => {
+  if (loadedBook || error) {
+    const bookUpdateSubmitHandler = async (event: React.SyntheticEvent) => {
       event.preventDefault();
-
-      console.log(formState.inputs);
+      try {
+        await sendRequest(
+          `http://localhost:5000/api/livros/${bookId}`,
+          "PATCH",
+          JSON.stringify({
+            title: formState.inputs.title.value,
+            summary: formState.inputs.summary.value,
+            authors: formState.inputs.authors.value,
+          }),
+          {
+            "Content-Type": "application/json",
+          }
+        );
+      } catch (err) {}
+      navigate(`/${auth.userId}/livros`, {
+        replace: true,
+      });
     };
 
     if (isLoading) {
       return (
         <div className="center">
-          <h2>Carregando...</h2>
+          <LoadingSpinner asOverlay />
         </div>
       );
     }
 
     return (
-      <form className="book-form" onSubmit={bookUpdateSubmitHandler}>
-        <Input
-          id="title"
-          element="input"
-          placeholder="Título do livro..."
-          type="text"
-          label="Título"
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText="Por favor, insira um título válido."
-          onInput={inputHandler}
-          value={formState.inputs.title.value}
-          valid={formState.inputs.title.isValid}
-        />
-        <Input
-          id="description"
-          element="textarea"
-          placeholder="Descrição do livro..."
-          type="text"
-          label="Descrição"
-          validators={[VALIDATOR_MINLENGTH(5)]}
-          errorText="Por favor, insira um título válido."
-          onInput={inputHandler}
-          value={formState.inputs.description.value}
-          valid={formState.inputs.description.isValid}
-        />
-        <Button type="submit" disabled={!formState.isValid}>
-          Atualizar Livro
-        </Button>
-      </form>
+      <React.Fragment>
+        <ErrorModal error={error} onClear={clearError} />
+        {!isLoading && loadedBook && (
+          <form className="book-form" onSubmit={bookUpdateSubmitHandler}>
+            <Input
+              id="title"
+              element="input"
+              placeholder="Título do livro..."
+              type="text"
+              label="Título"
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText="Por favor, insira um título válido."
+              onInput={inputHandler}
+              value={loadedBook.title}
+              valid={true}
+            />
+            <Input
+              id="summary"
+              element="textarea"
+              placeholder="Descrição do livro..."
+              type="text"
+              label="Descrição"
+              validators={[VALIDATOR_MINLENGTH(5)]}
+              errorText="Por favor, insira um título válido."
+              onInput={inputHandler}
+              value={loadedBook.summary}
+              valid={true}
+            />
+            <Input
+              id="authors"
+              placeholder="Autores do livro"
+              element="input"
+              type="text"
+              label="Autores"
+              errorText="Por favor, insira os nomes dos autores do livro."
+              validators={[VALIDATOR_REQUIRE()]}
+              onInput={inputHandler}
+              value={loadedBook.authors}
+              valid={true}
+            />
+            <Button type="submit" disabled={!formState.isValid}>
+              Atualizar Livro
+            </Button>
+          </form>
+        )}
+      </React.Fragment>
     );
   } else {
     return (

@@ -13,7 +13,7 @@ import { AuthContext } from "./shared/context/auth-context";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState("");
 
   const login = useCallback(
     (uid: any) => {
@@ -25,7 +25,7 @@ const App = () => {
 
   const logout = useCallback(() => {
     setIsLoggedIn(false);
-    setUserId(null);
+    setUserId("");
   }, [isLoggedIn]);
 
   let routes;
@@ -36,7 +36,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Users />} />
           <Route path="/livros/novo" element={<NewBook />} />
-          <Route path="/livros/:livroId" element={<UpdateBook />} />
+          <Route path="/livros/:lid" element={<UpdateBook />} />
           <Route path="/:userId/livros" element={<UserBooks />} />
         </Routes>
       </React.Fragment>

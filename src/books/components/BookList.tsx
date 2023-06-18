@@ -7,6 +7,7 @@ import "./BookList.css";
 
 type Props = {
   items: Book[];
+  onDeleteBook: Function;
 };
 
 const BookList = (props: Props) => {
@@ -24,7 +25,7 @@ const BookList = (props: Props) => {
   return (
     <ul className="book-list">
       {props.items.map((book) => (
-        <BookItem key={book.id} item={book} />
+        <BookItem key={book.id} item={book} onDelete={props.onDeleteBook} />
       ))}
     </ul>
   );
