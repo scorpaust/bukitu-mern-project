@@ -13,6 +13,7 @@ import { AuthContext } from "../../shared/context/auth-context";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { useHttpClient } from "../../shared/hooks/http-hook";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 
 const Aut = () => {
   const auth = useContext(AuthContext);
@@ -111,6 +112,7 @@ const Aut = () => {
               validators={[VALIDATOR_REQUIRE()]}
             />
           )}
+          {!isLoginMode && <ImageUpload id="image" center />}
           <Input
             element="input"
             id="email"
