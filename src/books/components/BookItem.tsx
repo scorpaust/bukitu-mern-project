@@ -3,17 +3,17 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  useState,
-} from "react";
-import Button from "../../shared/components/FormElements/Button";
-import Card from "../../shared/components/UIElements/Card";
-import Modal from "../../shared/components/UIElements/Modal";
-import { Book } from "../../types/Book";
-import "./BookItem.css";
-import { AuthContext } from "../../shared/context/auth-context";
-import { useHttpClient } from "../../shared/hooks/http-hook";
-import ErrorModal from "../../shared/components/UIElements/ErrorModal";
-import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+  useState
+} from 'react';
+import Button from '../../shared/components/FormElements/Button';
+import Card from '../../shared/components/UIElements/Card';
+import Modal from '../../shared/components/UIElements/Modal';
+import { Book } from '../../types/Book';
+import './BookItem.css';
+import { AuthContext } from '../../shared/context/auth-context';
+import { useHttpClient } from '../../shared/hooks/http-hook';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 
 type Props = {
   item: Book;
@@ -47,7 +47,7 @@ const BookItem = (props: Props) => {
     try {
       await sendRequest(
         `http://localhost:5000/api/livros/${props.item.id}`,
-        "DELETE"
+        'DELETE'
       );
       props.onDelete(props.item.id);
     } catch (err) {}
@@ -60,7 +60,10 @@ const BookItem = (props: Props) => {
         <Card className="book-item__content">
           {isLoading && <LoadingSpinner asOverlay />}
           <div className="book-item__image">
-            <img src={props.item.image} alt={props.item.title} />
+            <img
+              src={`http://localhost:5000/${props.item.image}`}
+              alt={props.item.title}
+            />
           </div>
           <div className="book-item__info">
             <h2>{props.item.title}</h2>

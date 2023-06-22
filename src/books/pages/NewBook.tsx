@@ -1,17 +1,18 @@
-import Input from "../../shared/components/FormElements/Input";
+import Input from '../../shared/components/FormElements/Input';
 import {
   VALIDATOR_MINLENGTH,
-  VALIDATOR_REQUIRE,
-} from "../../shared/util/validators";
-import "./BookForm.css";
-import Button from "../../shared/components/FormElements/Button";
-import { useForm } from "../../shared/hooks/form-hook";
-import React, { useContext } from "react";
-import { useHttpClient } from "../../shared/hooks/http-hook";
-import { AuthContext } from "../../shared/context/auth-context";
-import ErrorModal from "../../shared/components/UIElements/ErrorModal";
-import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
-import { createBrowserRouter, useNavigate } from "react-router-dom";
+  VALIDATOR_REQUIRE
+} from '../../shared/util/validators';
+import './BookForm.css';
+import Button from '../../shared/components/FormElements/Button';
+import { useForm } from '../../shared/hooks/form-hook';
+import React, { useContext } from 'react';
+import { useHttpClient } from '../../shared/hooks/http-hook';
+import { AuthContext } from '../../shared/context/auth-context';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import { createBrowserRouter, useNavigate } from 'react-router-dom';
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
 
 const NewBook = () => {
   const auth = useContext(AuthContext);
@@ -20,17 +21,21 @@ const NewBook = () => {
   const [formState, inputHandler] = useForm(
     {
       title: {
-        value: "",
-        isValid: false,
+        value: '',
+        isValid: false
       },
       description: {
-        value: "",
-        isValid: false,
+        value: '',
+        isValid: false
       },
       authors: {
-        value: "",
-        isValid: false,
+        value: '',
+        isValid: false
       },
+      image: {
+        value: null,
+        isValid: false
+      }
     },
     false
   );
@@ -41,24 +46,22 @@ const NewBook = () => {
     event.preventDefault();
 
     try {
-      await sendRequest(
-        "http://localhost:5000/api/livros",
-        "POST",
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          summary: formState.inputs.description.value,
-          image:
-            "https://media.gettyimages.com/id/1322433208/pt/vetorial/corporate-book-cover-design-template-in-a4.jpg",
-          authors: formState.inputs.authors.value,
-          userId: auth.userId,
-        }),
-        {
-          "Content-Type": "application/json",
-        }
-      );
+      const formData = new FormData();
 
-      navigate("/", {
-        replace: true,
+      formData.append('title', formState.inputs.title.value);
+
+      formData.append('summary', formState.inputs.description.value);
+
+      formData.append('image', formState.inputs.image.value);
+
+      formData.append('authors', formState.inputs.authors.value);
+
+      formData.append('userId', auth.userId);
+
+      await sendRequest('http://localhost:5000/api/livros', 'POST', formData);
+
+      navigate('/', {
+        replace: true
       });
     } catch (err) {}
   };
@@ -96,6 +99,12 @@ const NewBook = () => {
           errorText="Por favor, insira os nomes dos autores do livro."
           validators={[VALIDATOR_REQUIRE()]}
           onInput={inputHandler}
+        />
+        <ImageUpload
+          id="image"
+          onInput={inputHandler}
+          center={false}
+          errorText="Por favor, carregue uma imagem de capa para o livro."
         />
         <Button type="submit" disabled={!formState.isValid}>
           Adicionar Livro

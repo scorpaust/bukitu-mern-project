@@ -3,12 +3,12 @@ import {
   useCallback,
   useRef,
   useEffect,
-  MutableRefObject,
-} from "react";
+  MutableRefObject
+} from 'react';
 
 export const useHttpClient = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const activeHttpRequests: MutableRefObject<AbortController[]> = useRef([]);
 
@@ -17,8 +17,8 @@ export const useHttpClient = () => {
   const sendRequest = useCallback(
     async (
       url: string,
-      method = "GET",
-      body: string | null = null,
+      method = 'GET',
+      body: string | FormData | null = null,
       headers = {}
     ) => {
       try {
@@ -32,7 +32,7 @@ export const useHttpClient = () => {
           method,
           body,
           headers,
-          signal: httpAbortCtrl.signal,
+          signal: httpAbortCtrl.signal
         });
 
         const responseData: any | string = await response.json();
@@ -50,13 +50,13 @@ export const useHttpClient = () => {
         return responseData;
       } catch (err) {
         if (err instanceof Error) {
-          if (err.name === "AbortError") {
-            console.log("Abortada ligação à base de dados.");
+          if (err.name === 'AbortError') {
+            console.log('Abortada ligação à base de dados.');
             return; // exit early
           }
 
           setError(
-            err.message || "Algo correu errado. Tente, de novo, mais tarde."
+            err.message || 'Algo correu errado. Tente, de novo, mais tarde.'
           );
 
           setIsLoading(false);
@@ -69,7 +69,7 @@ export const useHttpClient = () => {
   );
 
   const clearError = () => {
-    setError("");
+    setError('');
   };
 
   useEffect(() => {

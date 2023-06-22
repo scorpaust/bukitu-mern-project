@@ -1,19 +1,19 @@
-import React, { useContext, useState } from "react";
-import Card from "../../shared/components/UIElements/Card";
-import Input from "../../shared/components/FormElements/Input";
-import Button from "../../shared/components/FormElements/Button";
-import "./Aut.css";
+import React, { useContext, useState } from 'react';
+import Card from '../../shared/components/UIElements/Card';
+import Input from '../../shared/components/FormElements/Input';
+import Button from '../../shared/components/FormElements/Button';
+import './Aut.css';
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
-  VALIDATOR_REQUIRE,
-} from "../../shared/util/validators";
-import { useForm } from "../../shared/hooks/form-hook";
-import { AuthContext } from "../../shared/context/auth-context";
-import ErrorModal from "../../shared/components/UIElements/ErrorModal";
-import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
-import { useHttpClient } from "../../shared/hooks/http-hook";
-import ImageUpload from "../../shared/components/FormElements/ImageUpload";
+  VALIDATOR_REQUIRE
+} from '../../shared/util/validators';
+import { useForm } from '../../shared/hooks/form-hook';
+import { AuthContext } from '../../shared/context/auth-context';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import { useHttpClient } from '../../shared/hooks/http-hook';
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
 
 const Aut = () => {
   const auth = useContext(AuthContext);
@@ -23,12 +23,12 @@ const Aut = () => {
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
-        value: "",
-        isValid: false,
+        value: '',
+        isValid: false
       },
       password: {
-        value: "",
-        isValid: false,
+        value: '',
+        isValid: false
       }
     },
     false
@@ -44,32 +44,29 @@ const Aut = () => {
     if (isLoginMode) {
       try {
         const responseData = await sendRequest(
-          "http://localhost:5000/api/utilizadores/entrar",
-          "POST",
+          'http://localhost:5000/api/utilizadores/entrar',
+          'POST',
           JSON.stringify({
             email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
+            password: formState.inputs.password.value
           }),
           {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json'
           }
         );
         auth.login(responseData.user.id);
       } catch (err) {}
     } else {
       try {
+        const formData = new FormData();
+        formData.append('email', formState.inputs.email.value);
+        formData.append('name', formState.inputs.name.value);
+        formData.append('password', formState.inputs.password.value);
+        formData.append('image', formState.inputs.image.value);
         const responseData = await sendRequest(
-          "http://localhost:5000/api/utilizadores/registar",
-          "POST",
-          JSON.stringify({
-            name: formState.inputs.name.value,
-            email: formState.inputs.email.value,
-            image: formState.inputs.image.value,
-            password: formState.inputs.password.value,
-          }),
-          {
-            "Content-Type": "application/json",
-          }
+          'http://localhost:5000/api/utilizadores/registar',
+          'POST',
+          formData
         );
         auth.login(responseData.user.id);
       } catch (err) {}
@@ -87,7 +84,7 @@ const Aut = () => {
         {
           ...formState.inputs,
           name: {
-            value: "",
+            value: '',
             isValid: false
           },
           image: {
@@ -122,7 +119,14 @@ const Aut = () => {
               validators={[VALIDATOR_REQUIRE()]}
             />
           )}
-          {!isLoginMode && <ImageUpload id="image" center onInput={inputHandler} errorText="Invalid data" />}
+          {!isLoginMode && (
+            <ImageUpload
+              id="image"
+              center
+              onInput={inputHandler}
+              errorText="Invalid data"
+            />
+          )}
           <Input
             element="input"
             id="email"
@@ -144,11 +148,11 @@ const Aut = () => {
             validators={[VALIDATOR_MINLENGTH(6)]}
           />
           <Button type="submit" disabled={!formState.isValid}>
-            {isLoginMode ? "Entrar" : "Registar"}
+            {isLoginMode ? 'Entrar' : 'Registar'}
           </Button>
         </form>
         <Button inverse onClick={switchModeHandler}>
-          Mudar para {isLoginMode ? "Registar" : "Entrar"}
+          Mudar para {isLoginMode ? 'Registar' : 'Entrar'}
         </Button>
       </Card>
     </>
