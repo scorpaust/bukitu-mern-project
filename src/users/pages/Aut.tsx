@@ -29,7 +29,7 @@ const Aut = () => {
       password: {
         value: "",
         isValid: false,
-      },
+      }
     },
     false
   );
@@ -38,6 +38,8 @@ const Aut = () => {
 
   const authSubmitHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault();
+
+    console.log(formState.inputs);
 
     if (isLoginMode) {
       try {
@@ -62,6 +64,7 @@ const Aut = () => {
           JSON.stringify({
             name: formState.inputs.name.value,
             email: formState.inputs.email.value,
+            image: formState.inputs.image.value,
             password: formState.inputs.password.value,
           }),
           {
@@ -76,14 +79,21 @@ const Aut = () => {
   const switchModeHandler = () => {
     if (!isLoginMode) {
       setFormData(
-        { name: undefined },
+        { ...formState.inputs, name: undefined, image: null },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
     } else {
       setFormData(
         {
           ...formState.inputs,
-          ...formState.inputs,
+          name: {
+            value: "",
+            isValid: false
+          },
+          image: {
+            value: null,
+            isValid: false
+          }
         },
         false
       );
@@ -112,7 +122,7 @@ const Aut = () => {
               validators={[VALIDATOR_REQUIRE()]}
             />
           )}
-          {!isLoginMode && <ImageUpload id="image" center />}
+          {!isLoginMode && <ImageUpload id="image" center onInput={inputHandler} errorText="Invalid data" />}
           <Input
             element="input"
             id="email"
