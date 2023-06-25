@@ -5,6 +5,7 @@ import {
   useEffect,
   MutableRefObject
 } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const useHttpClient = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -13,6 +14,8 @@ export const useHttpClient = () => {
   const activeHttpRequests: MutableRefObject<AbortController[]> = useRef([]);
 
   const isMounted = useRef(true);
+
+  const navigate = useNavigate();
 
   const sendRequest = useCallback(
     async (
@@ -70,6 +73,7 @@ export const useHttpClient = () => {
 
   const clearError = () => {
     setError('');
+    navigate(-1);
   };
 
   useEffect(() => {

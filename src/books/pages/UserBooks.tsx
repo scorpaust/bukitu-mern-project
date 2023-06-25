@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import ErrorModal from "../../shared/components/UIElements/ErrorModal";
-import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
-import { useHttpClient } from "../../shared/hooks/http-hook";
-import { Book } from "../../types/Book";
-import BookList from "../components/BookList";
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import { useHttpClient } from '../../shared/hooks/http-hook';
+import { Book } from '../../types/Book';
+import BookList from '../components/BookList';
 
 const UserBooks = () => {
   const userId = useParams().userId;
   const [loadedBooks, setLoadedBooks] = useState([]);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
+  const navigate = useNavigate();
 
   const fetchBooks = async () => {
     try {
@@ -30,6 +32,7 @@ const UserBooks = () => {
     setLoadedBooks((prevBooks) =>
       prevBooks.filter((book: Book) => book.id !== deletedBookId)
     );
+    navigate('/', { replace: true });
   };
 
   return (

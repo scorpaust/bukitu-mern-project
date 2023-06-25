@@ -29,7 +29,7 @@ const BookItem = (props: Props) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const isOwner = () => {
-    if (props.item.userIds.includes(auth.userId)) return true;
+    if (props.item.userIds.includes(auth.userId as never)) return true;
 
     return false;
   };
@@ -47,7 +47,11 @@ const BookItem = (props: Props) => {
     try {
       await sendRequest(
         `http://localhost:5000/api/livros/${props.item.id}`,
-        'DELETE'
+        'DELETE',
+        null,
+        {
+          Authorization: 'Bearer ' + auth.token
+        }
       );
       props.onDelete(props.item.id);
     } catch (err) {}

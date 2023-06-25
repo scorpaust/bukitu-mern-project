@@ -1,36 +1,33 @@
-import React, { useCallback, useState } from "react";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import "./App.css";
-import NewBook from "./books/pages/NewBook";
-import UpdateBook from "./books/pages/UpdateBook";
-import UserBooks from "./books/pages/UserBooks";
+import React, { SetStateAction, useCallback, useEffect, useState } from 'react';
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  redirect,
+  Navigate,
+  useLocation,
+  matchRoutes,
+  Location,
+  useNavigate
+} from 'react-router-dom';
+import './App.css';
+import NewBook from './books/pages/NewBook';
+import UpdateBook from './books/pages/UpdateBook';
+import UserBooks from './books/pages/UserBooks';
 
-import MainNavigation from "./shared/components/Navigation/MainNavigation";
-import Aut from "./users/pages/Aut";
-import Users from "./users/pages/Users";
-import { AuthContext } from "./shared/context/auth-context";
+import MainNavigation from './shared/components/Navigation/MainNavigation';
+import Aut from './users/pages/Aut';
+import Users from './users/pages/Users';
+import { AuthContext } from './shared/context/auth-context';
+import { ReadableByteStreamController } from 'stream/web';
+import { useAuth } from './shared/hooks/auth-hook';
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const [userId, setUserId] = useState("");
-
-  const login = useCallback(
-    (uid: any) => {
-      setIsLoggedIn(true);
-      setUserId(uid);
-    },
-    [isLoggedIn]
-  );
-
-  const logout = useCallback(() => {
-    setIsLoggedIn(false);
-    setUserId("");
-  }, [isLoggedIn]);
-
   let routes;
 
-  if (isLoggedIn) {
+  const { token, login, logout, userId } = useAuth();
+
+  if (token || JSON.parse(localStorage.getItem('userData') as string)) {
     routes = (
       <React.Fragment>
         <Routes>
@@ -48,21 +45,28 @@ const App = () => {
           <Route path="/" element={<Users />} />
           <Route path="/aut" element={<Aut />} />
         </Routes>
+        <Navigate to="/aut" replace={true} />
       </React.Fragment>
     );
   }
 
   return (
-    <>
+    <React.Fragment>
       <AuthContext.Provider
-        value={{ isLoggedIn, userId: userId, login, logout }}
+        value={{
+          isLoggedIn: !!token,
+          token: token,
+          userId: userId,
+          login,
+          logout
+        }}
       >
         <BrowserRouter>
           <MainNavigation />
           <main>{routes}</main>
         </BrowserRouter>
       </AuthContext.Provider>
-    </>
+    </React.Fragment>
   );
 };
 

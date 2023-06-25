@@ -1,4 +1,4 @@
-import { User } from "./User";
+import { User } from './User';
 
 export type Book = {
   id: string;
@@ -6,5 +6,5 @@ export type Book = {
   summary: string;
   authors: string;
   image: string;
-  userIds: string[];
+  userIds: string | null[];
 };

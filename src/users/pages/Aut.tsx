@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Card from '../../shared/components/UIElements/Card';
 import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
@@ -14,11 +14,14 @@ import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 import { useHttpClient } from '../../shared/hooks/http-hook';
 import ImageUpload from '../../shared/components/FormElements/ImageUpload';
+import { redirect, useNavigate } from 'react-router-dom';
 
 const Aut = () => {
   const auth = useContext(AuthContext);
 
   const [isLoginMode, setIsLoginMode] = useState(true);
+
+  const navigate = useNavigate();
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -39,8 +42,6 @@ const Aut = () => {
   const authSubmitHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    console.log(formState.inputs);
-
     if (isLoginMode) {
       try {
         const responseData = await sendRequest(
@@ -54,8 +55,11 @@ const Aut = () => {
             'Content-Type': 'application/json'
           }
         );
-        auth.login(responseData.user.id);
-      } catch (err) {}
+        auth.login(responseData.userId, responseData.token);
+        navigate('/', { replace: true });
+      } catch (err) {
+        console.error(err);
+      }
     } else {
       try {
         const formData = new FormData();
@@ -68,7 +72,7 @@ const Aut = () => {
           'POST',
           formData
         );
-        auth.login(responseData.user.id);
+        auth.login(responseData.userId, responseData.token);
       } catch (err) {}
     }
   };

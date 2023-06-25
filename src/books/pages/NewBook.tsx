@@ -56,9 +56,9 @@ const NewBook = () => {
 
       formData.append('authors', formState.inputs.authors.value);
 
-      formData.append('userId', auth.userId);
-
-      await sendRequest('http://localhost:5000/api/livros', 'POST', formData);
+      await sendRequest('http://localhost:5000/api/livros', 'POST', formData, {
+        Authorization: 'Bearer ' + auth.token
+      });
 
       navigate('/', {
         replace: true

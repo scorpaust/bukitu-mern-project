@@ -2,21 +2,21 @@ import React, {
   FormEventHandler,
   useContext,
   useEffect,
-  useState,
-} from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import Button from "../../shared/components/FormElements/Button";
-import Input from "../../shared/components/FormElements/Input";
-import ErrorModal from "../../shared/components/UIElements/ErrorModal";
-import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
-import { AuthContext } from "../../shared/context/auth-context";
-import { useForm } from "../../shared/hooks/form-hook";
-import { useHttpClient } from "../../shared/hooks/http-hook";
+  useState
+} from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import Button from '../../shared/components/FormElements/Button';
+import Input from '../../shared/components/FormElements/Input';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import { AuthContext } from '../../shared/context/auth-context';
+import { useForm } from '../../shared/hooks/form-hook';
+import { useHttpClient } from '../../shared/hooks/http-hook';
 import {
   VALIDATOR_REQUIRE,
-  VALIDATOR_MINLENGTH,
-} from "../../shared/util/validators";
-import "./BookForm.css";
+  VALIDATOR_MINLENGTH
+} from '../../shared/util/validators';
+import './BookForm.css';
 
 const UpdateBook = () => {
   const bookId = useParams().lid;
@@ -32,17 +32,17 @@ const UpdateBook = () => {
   const [formState, inputHandler, setFormData] = useForm(
     {
       title: {
-        value: "",
-        isValid: false,
+        value: '',
+        isValid: false
       },
       description: {
-        value: "",
-        isValid: false,
+        value: '',
+        isValid: false
       },
       authors: {
-        value: "",
-        isValid: false,
-      },
+        value: '',
+        isValid: false
+      }
     },
     false
   );
@@ -57,17 +57,17 @@ const UpdateBook = () => {
       setFormData(
         {
           title: {
-            value: loadedBook != undefined ? loadedBook.title : "",
-            isValid: true,
+            value: loadedBook != undefined ? loadedBook.title : '',
+            isValid: true
           },
           description: {
-            value: loadedBook != undefined ? loadedBook.summary : "",
-            isValid: true,
+            value: loadedBook != undefined ? loadedBook.summary : '',
+            isValid: true
           },
           authors: {
-            value: loadedBook != undefined ? loadedBook.authors : "",
-            isValid: true,
-          },
+            value: loadedBook != undefined ? loadedBook.authors : '',
+            isValid: true
+          }
         },
         true
       );
@@ -84,19 +84,20 @@ const UpdateBook = () => {
       try {
         await sendRequest(
           `http://localhost:5000/api/livros/${bookId}`,
-          "PATCH",
+          'PATCH',
           JSON.stringify({
             title: formState.inputs.title.value,
             summary: formState.inputs.summary.value,
-            authors: formState.inputs.authors.value,
+            authors: formState.inputs.authors.value
           }),
           {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + auth.token
           }
         );
       } catch (err) {}
       navigate(`/${auth.userId}/livros`, {
-        replace: true,
+        replace: true
       });
     };
 
